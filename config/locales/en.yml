@@ -1,0 +1,4 @@
+en:
+  invalid_user: "There was an error processing your request. Please contact our support team."
+  passwords_dont_match: "Your password and password confirmation did not match. Please try again."
+  invalid_pw: "Your current password was incorrect. Please try again."
