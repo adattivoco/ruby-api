@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get    'health',               to: 'application#health'
-  post   'authenticate',         to: 'token#create'
-  delete 'invalidate',           to: 'token#destroy'
+  post   'auth',                 to: 'token#create'
+  delete 'auth',                 to: 'token#destroy'
   post   'users/reset_password', to: 'users#send_reset'
   patch  'users/reset_password', to: 'users#attempt_reset'
   get    'purchase/token',       to: 'purchase#generate_payment_token'

@@ -27,7 +27,7 @@ class User
 
   # Methods
 
-  def first_name
+  def firstName
     if self.name.split.count > 1
       self.name.split[0..-2].join(' ')
     else
@@ -35,7 +35,7 @@ class User
     end
   end
 
-  def last_name
+  def lastName
     if self.name.split.count > 1
       self.name.split.last
     else
@@ -47,7 +47,6 @@ class User
     self.auth_token = nil
     self.save
   end
-
 
   # Class Methods
 

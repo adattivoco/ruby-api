@@ -5,21 +5,21 @@ class UsersController < ApplicationController
   # get /users
   def index
     if params[:admin] && params[:admin].downcase == "true"
-      render json: Admin.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at]
+      render json: Admin.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at], methods: [:type, :firstName, :lastName]
     elsif params[:admin] && params[:admin].downcase == "false"
-      render json: CompanyUser.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at]
+      render json: CompanyUser.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at], methods: [:type, :firstName, :lastName]
     elsif params[:filter].blank?
-      render json: User.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at]
+      render json: User.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at], methods: [:type, :firstName, :lastName]
     else
       filter = params[:filter]
       filter = "\"#{filter}\"" if /@|./ =~ filter
-      render json: CompanyUser.where({ "$text": { "$search": filter} } ).order(name: :asc), except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at]
+      render json: CompanyUser.where({ "$text": { "$search": filter} } ).order(name: :asc), except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at], methods: [:type, :firstName, :lastName]
     end
   end
 
   # get :id /users/:id
   def show
-    render json: User.find(params[:id]), except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at]
+    render json: User.find(params[:id]), except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at], methods: [:type, :firstName, :lastName]
   end
 
   # post /users/reset_password
@@ -60,7 +60,7 @@ class UsersController < ApplicationController
         admin.set(reset_password_token: token, reset_password_sent_at: DateTime.now)
         UserMailer.reset_password(params[:email], token, params[:clientURL]).deliver
       end
-      render json: Admin.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at]
+      render json: Admin.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at], methods: [:type, :firstName, :lastName]
     end
   end
 
@@ -73,7 +73,7 @@ class UsersController < ApplicationController
           if params[:user][:password] == params[:user][:password_confirmation]
             @current_user.update!(params.require(:user).permit(:password))
             auditLog(@current_user, nil, :UPDATE_COMPANY_USER, "User: #{@current_user.name}/#{@current_user.email} password updated")
-            render json: { user: {"_id" => @current_user._id, auth_token: @current_user.auth_token, name: @current_user.name, email: @current_user.email} }
+            render json: { user: @current_user, token: @current_user.auth_token }, methods: [:type, :firstName, :lastName]
           else
             render :json => {error: I18n.t(:passwords_dont_match)}, :status => :bad_request
           end
@@ -88,12 +88,12 @@ class UsersController < ApplicationController
           @current_user.assign_attributes(params.require(:user).permit(:name, :email))
           if @current_user.valid?
             @current_user.save
-            render json: { user: {"_id" => @current_user._id, auth_token: @current_user.auth_token, name: @current_user.name, email: @current_user.email} }
+            render json: { user: @current_user, token: @current_user.auth_token }, methods: [:type, :firstName, :lastName]
           else
             render :json => {error: "A user with that email already exists on our system. Please choose another email address."}, :status => :bad_request
           end
         else
-          render json: { user: {"_id" => @current_user._id, auth_token: @current_user.auth_token, name: @current_user.name, email: @current_user.email} }
+          render json: { user: @current_user, token: @current_user.auth_token }, methods: [:type, :firstName, :lastName]
         end
       end
     else
@@ -105,7 +105,7 @@ class UsersController < ApplicationController
   def destroy
     if params[:admin] && params[:admin].downcase == "true"
       Admin.find(params[:id]).destroy
-      render json: Admin.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at]
+      render json: Admin.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at], methods: [:type, :firstName, :lastName]
     end
   end
 end
