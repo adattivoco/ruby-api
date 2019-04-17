@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   delete 'auth',                 to: 'token#destroy'
   post   'users/reset_password', to: 'users#send_reset'
   patch  'users/reset_password', to: 'users#attempt_reset'
+  post   'users/admin',          to: 'users#create_admin'
   get    'purchase/token',       to: 'purchase#generate_payment_token'
   get    'products/summary',     to: 'products#summary_products'
 

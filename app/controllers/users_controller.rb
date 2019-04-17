@@ -50,18 +50,30 @@ class UsersController < ApplicationController
 
   # post /users
   def create
-    if params[:admin] && params[:admin].downcase == "true"
       user = User.find_by(email: params[:email])
       if user.blank?
-        admin = Admin.create( name: params['name'],
+        admin = Admin.create( name: params['firstName'] + " " + params['lastName'],
                               email: params['email'],
                               password: SecureRandom.hex(8))
         token = SecureRandom.hex(24)
         admin.set(reset_password_token: token, reset_password_sent_at: DateTime.now)
-        UserMailer.reset_password(params[:email], token, params[:clientURL]).deliver
+        #UserMailer.reset_password(params[:email], token, params[:clientURL]).deliver
       end
-      render json: Admin.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at], methods: [:type, :firstName, :lastName]
+      render json: user
+  end
+
+  # post /users/admin
+  def create_admin
+    user = User.find_by(email: params[:email])
+    if user.blank?
+      admin = Admin.create( name: params['name'],
+                            email: params['email'],
+                            password: SecureRandom.hex(8))
+      token = SecureRandom.hex(24)
+      admin.set(reset_password_token: token, reset_password_sent_at: DateTime.now)
+      #UserMailer.reset_password(params[:email], token, params[:clientURL]).deliver
     end
+    render json: Admin.all, except: [:password_digest, :auth_token, :reset_password_token, :reset_password_sent_at], methods: [:type, :firstName, :lastName]
   end
 
   # patch or put /users/:id
