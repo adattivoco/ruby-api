@@ -12,7 +12,7 @@ class TokenControllerTest < ActionDispatch::IntegrationTest
   # company user tests
 
   test "login_user" do
-    post "/authenticate", params: { email: "user@example.com", password: "thankyou" }
+    post "/auth", params: { email: "user@example.com", password: "thankyou" }
     assert_response :success
     assert_equal response.content_type, 'application/json'
     jdata = JSON.parse response.body
@@ -20,17 +20,17 @@ class TokenControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "invalid_pw_uppercase" do
-    post "/authenticate", params: { email: "user@example.com", password: "THANKYOU" }
+    post "/auth", params: { email: "user@example.com", password: "THANKYOU" }
     assert_response :unauthorized
   end
 
   test "invalid_pw" do
-    post "/authenticate", params: { email: "user@example.com", password: "thank" }
+    post "/auth", params: { email: "user@example.com", password: "thank" }
     assert_response :unauthorized
   end
 
   test "valid_upper_email" do
-    post "/authenticate", params: { email: "USER@EXAMPLE.COM", password: "thankyou" }
+    post "/auth", params: { email: "USER@EXAMPLE.COM", password: "thankyou" }
     assert_response :success
     assert_equal response.content_type, 'application/json'
     jdata = JSON.parse response.body
@@ -38,7 +38,7 @@ class TokenControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "invalid_email" do
-    post "/authenticate", params: { email: "er@example.com", password: "thankyou" }
+    post "/auth", params: { email: "er@example.com", password: "thankyou" }
     assert_response :unauthorized
   end
 
@@ -46,33 +46,33 @@ class TokenControllerTest < ActionDispatch::IntegrationTest
   # admin user tests
 
   test "login_admin_user" do
-    post "/authenticate", params: { email: "admin@example.com", password: "youarewelcome" }
+    post "/auth", params: { email: "admin@example.com", password: "youarewelcome" }
     assert_response :success
     assert_equal response.content_type, 'application/json'
     jdata = JSON.parse response.body
-    assert_equal jdata["user"]["admin"], true
+    assert_equal jdata["user"]["type"], 'admin'
   end
 
   test "admin_invalid_pw_uppercase" do
-    post "/authenticate", params: { email: "admin@example.com", password: "YOUAREWELCOME" }
+    post "/auth", params: { email: "admin@example.com", password: "YOUAREWELCOME" }
     assert_response :unauthorized
   end
 
   test "admin_invalid_pw" do
-    post "/authenticate", params: { email: "admin@example.com", password: "youare" }
+    post "/auth", params: { email: "admin@example.com", password: "youare" }
     assert_response :unauthorized
   end
 
   test "admin_valid_upper_email" do
-    post "/authenticate", params: { email: "ADMIN@EXAMPLE.COM", password: "youarewelcome" }
+    post "/auth", params: { email: "ADMIN@EXAMPLE.COM", password: "youarewelcome" }
     assert_response :success
     assert_equal response.content_type, 'application/json'
     jdata = JSON.parse response.body
-    assert_equal jdata["user"]["admin"], true
+    assert_equal jdata["user"]["type"], 'admin'
   end
 
   test "admin_invalid_email" do
-    post "/authenticate", params: { email: "ad@example.com", password: "youarewelcome" }
+    post "/auth", params: { email: "ad@example.com", password: "youarewelcome" }
     assert_response :unauthorized
   end
 

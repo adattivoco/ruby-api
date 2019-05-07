@@ -26,7 +26,7 @@ module CueApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    config.active_job.queue_adapter = :active_elastic_job
+    #config.active_job.queue_adapter = :active_elastic_job
 
     config.just_added_time = 45.days
 
